@@ -1,3 +1,4 @@
+import { render } from "sass";
 import TodoManager from "./TodoManager";
 import createHTMLElement from "./createHTMLElement";
 
@@ -7,6 +8,7 @@ const content = document.getElementById("content");
 
 const taskContainer = document.createElement("div");
 taskContainer.classList.add("task-container");
+taskContainer.style.border = "1px solid black";
 
 function renderTodos(projectName) {
   taskContainer.innerHTML = "";
@@ -19,7 +21,7 @@ function renderTodos(projectName) {
   }
 }
 
-function renderInput() {
+function renderTodoInput() {
   const form = createHTMLElement("form", [], { id: "addTask" });
   const titleLabel = createHTMLElement(
     "label",
@@ -71,6 +73,15 @@ function renderInput() {
     id: "priority",
     name: "priority",
   });
+  ["low", "mid", "high"].forEach((priorityName) => {
+    const option = createHTMLElement(
+      "option",
+      [`priority--${priorityName}`],
+      {},
+      `${priorityName}`
+    );
+    priorityInput.appendChild(option);
+  });
   const projectLabel = createHTMLElement(
     "label",
     [],
@@ -85,7 +96,7 @@ function renderInput() {
   });
   const submitBtn = createHTMLElement(
     "button",
-    ["submit-btn"],
+    ["addProject"],
     { type: "submit" },
     "add task"
   );
@@ -111,7 +122,7 @@ function renderInput() {
       descriptionInput.value,
       dueDateInput.value,
       priorityInput.value,
-      priorityInput.value
+      projectInput.value
     );
     renderTodos();
   });
@@ -119,7 +130,60 @@ function renderInput() {
   return form;
 }
 
-content.append(renderInput());
-content.append(taskContainer);
+function renderProjects() {
+  const projectsContainer = createHTMLElement("div", ["projects-cont"]);
+  const form = createHTMLElement("form", ["addProject"]);
+
+  const projectLabel = createHTMLElement("label", [], { for: "newProject" });
+  const projectInput = createHTMLElement("input", [], {
+    id: "newProject",
+    name: "newProject",
+  });
+  const addProjectBtn = createHTMLElement(
+    "button",
+    ["addProject"],
+    {
+      type: "submit",
+    },
+    "add project"
+  );
+
+  const projectsList = createHTMLElement("ul", ["projects-list"]);
+  const projects = tdm.getProjects();
+
+  function renderProjectList() {
+    const addTodoDropdownProject = document.getElementById("project");
+    projectsList.innerHTML = "";
+    addTodoDropdownProject.innerHTML = "";
+
+    const nullOption = createHTMLElement("option");
+    addTodoDropdownProject.appendChild(nullOption);
+    for (const project in projects) {
+      const li = createHTMLElement(
+        "li",
+        ["projects__project"],
+        {},
+        `${project}`
+      );
+      const option = createHTMLElement("option", [], {}, `${project}`);
+      addTodoDropdownProject.appendChild(option);
+      projectsList.appendChild(li);
+    }
+  }
+  form.append(projectLabel, projectInput, addProjectBtn);
+  projectsContainer.append(form, projectsList);
+  renderProjectList();
+
+  addProjectBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    tdm.addProject(projectInput.value);
+    renderProjectList();
+  });
+
+  return projectsContainer;
+}
+
+content.append(renderTodoInput());
+content.append(taskContainer, renderProjects());
 
 renderTodos();
