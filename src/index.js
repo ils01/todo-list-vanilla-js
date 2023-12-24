@@ -1,30 +1,125 @@
-import localStorageManager from "./LocalStorageManager";
 import TodoManager from "./TodoManager";
-
-localStorageManager.clear();
+import createHTMLElement from "./createHTMLElement";
 
 const tdm = new TodoManager();
 
-tdm.addTodo("do dishes", "", "", "high");
-tdm.addTodo("do hw", "", "", "high");
-tdm.addTodo("read book", "", "", "low");
+const content = document.getElementById("content");
 
-tdm.addProject("gym");
-tdm.addTodo("get big arms", "", "", "mid");
-tdm.addTodo("get big legs", "", "", "mid");
+const taskContainer = document.createElement("div");
+taskContainer.classList.add("task-container");
 
-tdm.addTodoToTheProject(3, "gym");
-tdm.addTodoToTheProject(3, "gym");
-tdm.addTodoToTheProject(4, "gym");
+function renderTodos(projectName) {
+  taskContainer.innerHTML = "";
+  const todos = tdm.getTodos(projectName);
 
-tdm.addProject("moving");
-tdm.deleteProject("moving");
+  for (const todo of todos) {
+    const todoElt = document.createElement("div");
+    todoElt.textContent = todo.title;
+    taskContainer.append(todoElt);
+  }
+}
 
-tdm.toggleTodoStatus(3);
+function renderInput() {
+  const form = createHTMLElement("form", [], { id: "addTask" });
+  const titleLabel = createHTMLElement(
+    "label",
+    [],
+    {
+      for: "title",
+    },
+    "title"
+  );
+  const titleInput = createHTMLElement("input", [], {
+    type: "text",
+    id: "title",
+    name: "title",
+  });
+  const descriptionLabel = createHTMLElement(
+    "label",
+    [],
+    {
+      for: "description",
+    },
+    "description"
+  );
+  const descriptionInput = createHTMLElement("textarea", [], {
+    id: "decription",
+    name: "decription",
+  });
+  const dueDateLabel = createHTMLElement(
+    "label",
+    [],
+    {
+      for: "dueDate",
+    },
+    "due date"
+  );
+  const dueDateInput = createHTMLElement("input", [], {
+    type: "text",
+    id: "dueDate",
+    name: "dueDate",
+  });
+  const priorityLabel = createHTMLElement(
+    "label",
+    [],
+    {
+      for: "priority",
+    },
+    "priority"
+  );
+  const priorityInput = createHTMLElement("select", [], {
+    id: "priority",
+    name: "priority",
+  });
+  const projectLabel = createHTMLElement(
+    "label",
+    [],
+    {
+      for: "project",
+    },
+    "project"
+  );
+  const projectInput = createHTMLElement("select", [], {
+    id: "project",
+    name: "project",
+  });
+  const submitBtn = createHTMLElement(
+    "button",
+    ["submit-btn"],
+    { type: "submit" },
+    "add task"
+  );
 
-tdm.removeDuplicatesFromProject();
+  form.append(
+    titleLabel,
+    titleInput,
+    descriptionLabel,
+    descriptionInput,
+    dueDateLabel,
+    dueDateInput,
+    priorityLabel,
+    priorityInput,
+    projectLabel,
+    projectInput,
+    submitBtn
+  );
 
-// tdm.deleteProject("gym", true);
+  submitBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    tdm.addTodo(
+      titleInput.value,
+      descriptionInput.value,
+      dueDateInput.value,
+      priorityInput.value,
+      priorityInput.value
+    );
+    renderTodos();
+  });
 
-console.log(tdm.getTodos());
-console.log(tdm.getProjects());
+  return form;
+}
+
+content.append(renderInput());
+content.append(taskContainer);
+
+renderTodos();

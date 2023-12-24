@@ -21,9 +21,9 @@ export default class TodoManager {
       return this.todos.filter((todo) => todo.displayed === true);
     }
 
-    return this.todos.filter((todo) => {
-      return todo.displayed === true && todo.project === projectName;
-    });
+    return this.todos.filter(
+      (todo) => todo.displayed === true && todo.project === projectName
+    );
   }
 
   addTodo(
@@ -115,7 +115,7 @@ export default class TodoManager {
 
   removeDuplicatesFromProject(projectName) {
     if (!projectName) {
-      for (let projectN in Object.keys(this.projects)) {
+      for (const projectN in Object.keys(this.projects)) {
         if (Object.hasOwn(this.projects, projectN)) {
           this.projects[projectN] = [...new Set(this.projects[projectN])];
         }
