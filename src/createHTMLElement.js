@@ -1,13 +1,11 @@
 export default function createHTMLElement(
-  type,
+  tag,
   classList = [],
   attrs = {},
   text = ""
 ) {
-  const elt = document.createElement(type);
-  classList.forEach((className) => {
-    elt.classList.add(className);
-  });
+  const elt = document.createElement(tag);
+  elt.classList.add(...classList);
   elt.textContent = text;
 
   for (const attr in attrs) {
