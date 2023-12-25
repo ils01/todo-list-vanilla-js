@@ -60,7 +60,12 @@ export default class TodoManager {
 	}
 
 	deleteTodo(id) {
-		if (!id || id < 0 || id >= this.todos.length) {
+		if (
+			id === null ||
+			id === undefined ||
+			id < 0 ||
+			id >= this.todos.length
+		) {
 			return;
 		}
 		this.todos[id].displayed = false;
@@ -109,10 +114,12 @@ export default class TodoManager {
 			for (let i = 0; i < this.todos.length; i += 1) {
 				if (this.todos[i].project === projectName) {
 					this.todos[i].project = "";
+					console.log(this.todos[i].project);
 				}
 			}
 		}
 		delete this.projects[projectName];
+		LocalStorageManager.updateObject("todos", this.todos);
 		LocalStorageManager.updateObject("projects", this.projects);
 	}
 

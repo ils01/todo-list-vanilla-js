@@ -5,16 +5,67 @@ const tdm = new TodoManager();
 
 const content = document.getElementById("content");
 
+function createTodo(todo) {
+	if (!todo) {
+		return "error!";
+	}
+	const todoElt = createHTMLElement("li", ["todo-item"]);
+	const timeLeft = createHTMLElement(
+		"div",
+		["todo__time-left"],
+		{},
+		"time left:"
+	);
+	const title = createHTMLElement(
+		"div",
+		["todo__title"],
+		{},
+		`${todo.title}`
+	);
+	const priority = createHTMLElement(
+		"div",
+		[`todo__priority--${todo.priority}`],
+		{},
+		`${todo.priority}`
+	);
+	const options = createHTMLElement("div", ["todo__options"], {}, "1 2 3");
+	const doneCheckbox = createHTMLElement("input", ["todo__done"], {
+		type: "checkbox",
+		id: `checkbox-${todo.id}`,
+		checked: todo.done,
+	});
+	doneCheckbox.addEventListener("click", () => {
+		tdm.toggleTodoStatus(todo.id);
+	});
+	const deleteTodoBtn = createHTMLElement(
+		"button",
+		["todo__dlt-btn"],
+		{ type: "button" },
+		"X"
+	);
+	deleteTodoBtn.addEventListener("click", (e) => {
+		tdm.deleteTodo(todo.id);
+		updateTodos(taskContainer.querySelector(".task-list"));
+	});
+
+	options.append(doneCheckbox, deleteTodoBtn);
+	todoElt.append(timeLeft, title, priority, options);
+	todoElt.style.display = "flex";
+	todoElt.style.gap = "1rem";
+	return todoElt;
+}
 function updateTodos(taskList, projectName) {
 	taskList.innerHTML = "";
 	const todos = tdm.getTodos(projectName);
 
 	if (Object.keys(todos).length < 1) {
-		taskList.innerHTML = "no todos :(";
+		taskList.innerHTML =
+			"no todos" +
+			(projectName ? ` in ${projectName} ` : " at all") +
+			" :(";
 	}
 	for (const todo of todos) {
-		const todoElt = document.createElement("div");
-		todoElt.textContent = `${todo.title}1`;
+		const todoElt = createTodo(todo);
 		taskList.appendChild(todoElt);
 	}
 }
@@ -38,7 +89,6 @@ function createTaskContainer() {
 	const taskContainer = createHTMLElement("div", ["task-cont"]);
 	const taskList = createHTMLElement("ul", ["task-list"]);
 	taskContainer.appendChild(taskList);
-	updateTodos(taskList);
 	return taskContainer;
 }
 
@@ -118,12 +168,7 @@ function createTodoInput() {
 		id: "project",
 		name: "project",
 	});
-	const projects = tdm.getProjects();
-	for (let i = 0; i < Object.keys(projects).length; i += 1) {
-		projectInput.appendChild(
-			createHTMLElement("option", [], {}, `${Object.keys(projects)[i]}`)
-		);
-	}
+	projectInput.innerHTML = "<option></option>";
 	const submitBtn = createHTMLElement(
 		"button",
 		["addProject"],
@@ -191,8 +236,12 @@ function updateProjectsList(projectsList) {
 	const projects = tdm.getProjects();
 
 	projectsList.innerHTML = "";
+	const todoInputProjectDropdown = document.getElementById("project");
 
 	for (const project in projects) {
+		todoInputProjectDropdown.appendChild(
+			createHTMLElement("option", [], {}, `${project}`)
+		);
 		const li = createHTMLElement("li", ["projects__project"]);
 		const projectBtn = createHTMLElement(
 			"button",
@@ -202,13 +251,23 @@ function updateProjectsList(projectsList) {
 			},
 			`${project}`
 		);
+		const deleteProjectBtn = createHTMLElement(
+			"button",
+			["project__dlt-btn"],
+			{ type: "button" },
+			"X"
+		);
 		projectBtn.addEventListener("click", () => {
 			updateTodos(
 				taskContainer.querySelector(".task-list"),
 				`${project}`
 			);
 		});
-		li.appendChild(projectBtn);
+		deleteProjectBtn.addEventListener("click", () => {
+			tdm.deleteProject(`${project}`);
+			updateProjectsList(projectsList);
+		});
+		li.append(projectBtn, deleteProjectBtn);
 		projectsList.appendChild(li);
 	}
 }
@@ -218,7 +277,6 @@ function createProjectsContainer() {
 	const projectsList = createHTMLElement("ul", ["projects-list"]);
 	const addProjectInput = createProjectInput();
 	projectsCont.append(addProjectInput, projectsList);
-	updateProjectsList(projectsList);
 	return projectsCont;
 }
 
@@ -228,14 +286,19 @@ function createNewTaskContainer() {
 	return newTaskCont;
 }
 
+const newTaskContainer = createNewTaskContainer();
 const taskContainer = createTaskContainer();
 const allBtnContainer = createAllBtnContainer();
-const newTaskContainer = createNewTaskContainer();
 const projectsContainer = createProjectsContainer();
 
 content.append(
+	newTaskContainer,
 	taskContainer,
 	allBtnContainer,
-	newTaskContainer,
 	projectsContainer
 );
+const taskList = taskContainer.querySelector(".task-list");
+const projectsList = projectsContainer.querySelector(".projects-list");
+
+updateTodos(taskList);
+updateProjectsList(projectsList);
