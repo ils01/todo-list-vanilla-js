@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "css-loader": "^6.8.1",
+        "date-fns": "^3.0.6",
         "i": "^0.3.7",
         "sass": "^1.69.5",
         "sass-loader": "^13.3.2",

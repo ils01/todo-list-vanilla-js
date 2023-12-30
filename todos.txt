@@ -1,0 +1,28 @@
++ store todoCounter in LocalStorage
++ display by project
++ display all
++ toggle done status 
++ delete task
++ delete project
+...
++ delete project WITH TODOS
++ delete all DONE todos within Project
++ todo details display
++ make fields required
++ edit task
+	+ edit priority on click
+- edit project (name)
+- sort
+    - time left
+    - time added
+- notification
+- design
+    - font 'noto sans'
+	- light/dark theme in sass
+- showlight elt function ? 
+- max length on inputs
+- mark project as done
+- trashbin
+    
+? - list projects as stack
+

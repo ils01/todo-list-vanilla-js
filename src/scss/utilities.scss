@@ -1,0 +1,14 @@
+@use "./color" as color;
+
+.strikethrough {
+	text-decoration: line-through black;
+	color: color.$lightgray;
+}
+
+.secondary-text {
+	&-small {
+		// color: color.$lightgray;
+		font-style: italic;
+		font-size: 0.9375em;
+	}
+}

@@ -1,0 +1,24 @@
+@use "./color.scss";
+
+button {
+	max-width: 18ch;
+	background-color: color.$white;
+	border: 1px solid color.$dark;
+	cursor: pointer;
+	display: block;
+	padding: 0.25rem 0.75rem;
+	&:hover {
+		box-shadow: 1px 1px 8px #4b4b4b73;
+	}
+}
+
+.button--delete {
+	border-color: color.$red;
+	font-weight: 700;
+	font-size: 0.9375rem;
+	padding: 0 0.35rem;
+}
+
+.button--add {
+	border-color: color.$cyan;
+}

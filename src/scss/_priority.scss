@@ -1,0 +1,35 @@
+@use "./color.scss" as color;
+
+$priorities: (
+	"low": rgb(32, 128, 32),
+	"mid": rgb(199, 136, 19),
+	"high": rgb(202, 56, 56),
+);
+
+.todo__priority {
+	border-radius: 0.75em;
+	font-size: 0.8125em;
+	font-style: italic;
+}
+
+@each $priority, $color in $priorities {
+	.priority--#{$priority} {
+		border-color: $color;
+		color: $color;
+	}
+}
+
+$midyellow: #f6f7c4;
+$highred: #f09797a4;
+
+.todo-item {
+	&:has(.todo__priority.priority--low):hover {
+		background-color: color.$snow;
+	}
+	&:has(.priority--mid):hover {
+		background-color: $midyellow;
+	}
+	&:has(.priority--high):hover {
+		background-color: $highred;
+	}
+}
